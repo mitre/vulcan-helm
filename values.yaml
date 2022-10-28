@@ -1,0 +1,169 @@
+# Default values for vulcan-helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  repository: mitre/vulcan
+  tag: latest
+  pullPolicy: IfNotPresent
+
+web:
+  hpa:
+     # set this to true to enable horizontal pod autoscaling
+     # uncomment values.resources section if hpa is enabled
+    enabled: false
+    cputhreshold: 75
+    minpods: 1
+    maxpods: 10
+  replicaCount: 1
+# worker:
+#   hpa:
+#     # set this to true to enable horizontal pod autoscaling
+#     # uncomment values.resources section if hpa is enabled
+#     enabled: false
+#     cputhreshold: 75
+#     minpods: 2
+#     maxpods: 10
+#   replicaCount: 2
+
+services:
+  name: vulcan
+  internalPort: 3000
+  targetPort: 3000
+  type: LoadBalancer
+  annotations: {}
+    # For example
+    #  service.beta.kubernetes.io/aws-load-balancer-type: external
+    #  service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    #  service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+  # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+  # ingressClassName: nginx
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: ""
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: vulcan
+              port:
+                number: 3000
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 500m
+  #   memory: 512Mi
+  # requests:
+  #   cpu: 250m
+  #   memory: 256Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+postgresql:
+  enabled: true
+  nameOverride: vulcan-postgresql
+  auth:
+    username: postgres
+    postgresPassword: postgres
+    database: vulcan_production
+    # when existingSecret is defined auth.password, auth.PostgressPassword
+    # is ignored.
+    # existingSecret: secret-name
+    #    secretKeys:
+    #      adminPasswordKey: postgres-password
+    #      replicationPasswordKey: replication-password
+  # The following variables are only used when internal PG is disabled
+  # postgresqlHost: postgres
+  # postgresqlPort: 5432
+
+
+# Provide affinity for hooks if needed
+hooks:
+  affinity: {}
+  migrate:
+    env: []
+    resources:
+      limits:
+        memory: 1000Mi
+      requests:
+        memory: 1000Mi
+    # Defaults to performing the DB migration job after the install/upgrade.
+    # Can be overridden to "pre-install,pre-upgrade" with caution to perform migrations that are sometimes required for the deployment to become healthy
+    hookAnnotation: "post-install,post-upgrade"
+
+# ENVIRONMENT VARIABLES
+
+# If set, will apply environment variables found in this secret, after the variables defined in the env key.
+existingEnvSecret: ""
+
+env:
+  ACTIVE_STORAGE_SERVICE: local
+  ASSET_CDN_HOST: ""
+  FORCE_SSL: false
+  FRONTEND_URL: "http://0.0.0.0:3000"
+  INSTALLATION_ENV: helm
+  LOG_LEVEL: info
+  LOG_SIZE: 500
+  RAILS_ENV: production
+  RAILS_LOG_TO_STDOUT: true
+  RAILS_MAX_THREADS: 5
+  VULCAN_WELCOME_TEXT: ""
+  VULCAN_CONTACT_EMAIL: ""
+  SECRET_KEY_BASE: ""
+  SMTP_ADDRESS: ""
+  SMTP_AUTHENTICATION: plain
+  SMTP_ENABLE_STARTTLS_AUTO: true
+  SMTP_OPENSSL_VERIFY_MODE: none
+  SMTP_PASSWORD: ""
+  SMTP_PORT: 587
+  SMTP_USERNAME: ""
+

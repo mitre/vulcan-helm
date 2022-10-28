@@ -1,0 +1,28 @@
+{{- if .Values.vulcan.autoscaling.enabled }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "vulcan-helm.fullname" . }}
+  labels:
+    {{- include "vulcan-helm.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "vulcan-helm.fullname" . }}
+  minReplicas: {{ .Values.vulcan.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.vulcan.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.vulcan.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ .Values.vulcan.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.vulcan.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ .Values.vulcan.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
