@@ -15,7 +15,7 @@ web:
     cputhreshold: 75
     minpods: 1
     maxpods: 10
-  replicaCount: 1
+  replicaCount: 2
 
 
 services:
