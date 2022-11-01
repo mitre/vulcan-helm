@@ -10,11 +10,13 @@
 .hg/
 .hgignore
 .svn/
+kubectl
 # Common backup files
 *.swp
 *.bak
 *.tmp
 *.orig
+*.sha256
 *~
 # Various IDEs
 .project

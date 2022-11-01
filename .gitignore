@@ -1,0 +1,18 @@
+# Patterns to ignore
+.DS_Store
+.idea
+.dump
+*.sha256
+kubectl
+
+# Common backup files
+*.swp
+*.bak
+*.tmp
+*.orig
+*~
+# Various IDEs
+.project
+.idea/
+*.tmproj
+.vscode/
