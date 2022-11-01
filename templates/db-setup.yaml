@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-setup
+  labels:
+    app: {{ template "vulcan.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: {{ .Release.Name }}
+spec:
+  template:
+    spec:
+      containers:
+      - name: setup
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: Never
+        command: ["bin/rake"]
+        args: ["credentials:edit db:setup"]
+      restartPolicy: Never
+  backoffLimit: 4
