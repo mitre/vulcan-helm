@@ -16,15 +16,7 @@ web:
     minpods: 1
     maxpods: 10
   replicaCount: 1
-# worker:
-#   hpa:
-#     # set this to true to enable horizontal pod autoscaling
-#     # uncomment values.resources section if hpa is enabled
-#     enabled: false
-#     cputhreshold: 75
-#     minpods: 2
-#     maxpods: 10
-#   replicaCount: 2
+
 
 services:
   name: vulcan
@@ -71,7 +63,7 @@ ingress:
   enabled: false
   # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
   # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
-  # ingressClassName: nginx
+  # ClassName: nginx
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
@@ -149,7 +141,6 @@ env:
   ACTIVE_STORAGE_SERVICE: local
   ASSET_CDN_HOST: ""
   FORCE_SSL: false
-  FRONTEND_URL: "http://0.0.0.0:3000"
   INSTALLATION_ENV: helm
   LOG_LEVEL: info
   LOG_SIZE: 500
@@ -158,12 +149,35 @@ env:
   RAILS_MAX_THREADS: 5
   VULCAN_WELCOME_TEXT: ""
   VULCAN_CONTACT_EMAIL: ""
+  VULCAN_ENABLE_SMTP: ""
+  VULCAN_SMTP_ADDRESS: ""
+  VULCAN_SMTP_PORT: 587
+  VULCAN_SMTP_DOMAIN: ""
+  VULCAN_SMTP_AUTHENTICATION: plain
+  VULCAN_SMTP_TLS: ""
+  VULCAN_SMTP_OPENSSL_VERIFY_MODE: none
+  VULCAN_SMTP_ENABLE_STARTTLS_AUTO: true
+  VULCAN_SMTP_SERVER_USERNAME: ""
+  VULCAN_SMTP_SERVER_PASSWORD: ""
+  VULCAN_ENABLE_LOCAL_LOGIN: true
+  VULCAN_ENABLE_EMAIL_CONFIRMATION: false
+  VULCAN_SESSION_TIMEOUT: 60
+  VULCAN_ENABLE_LDAP: false
+  VULCAN_LDAP_HOST: localhost
+  VULCAN_LDAP_PORT: 389
+  VULCAN_LDAP_TITLE: LDAP
+  VULCAN_LDAP_ATTRIBUTE: uid
+  VULCAN_LDAP_ENCRYPTION: plain
+  VULCAN_LDAP_BIND_DN: ""
+  VULCAN_LDAP_ADMIN_PASS: ""
+  VULCAN_LDAP_BASE: ""
   SECRET_KEY_BASE: ""
-  SMTP_ADDRESS: ""
-  SMTP_AUTHENTICATION: plain
-  SMTP_ENABLE_STARTTLS_AUTO: true
-  SMTP_OPENSSL_VERIFY_MODE: none
-  SMTP_PASSWORD: ""
-  SMTP_PORT: 587
-  SMTP_USERNAME: ""
+  CIPHER_PASSWORD: ""
+  CIPHER_SALT: ""
+
+
+
+
+
+
 

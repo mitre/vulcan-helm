@@ -1,6 +1,6 @@
 apiVersion: v2
-name: vulcan-helm
-description: A Helm chart for Kubernetes
+name: vulcan
+description: A web application to streamline the development of STIGs from SRGs
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -21,4 +21,20 @@ version: 0.1.0
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "1.16.0"
+appVersion: "2.0.0"
+home: https://github.com/mitre/vulcan-helm
+icon: https://github.com/mitre/vulcan/blob/master/public/apple-touch-icon.png
+sources:
+  - https://github.com/mitre/vulcan
+  - https://mitre-vulcan-prod.herokuapp.com
+  - https://saf.mitre.org
+
+dependencies:
+  - condition: postgresql.enabled
+    name: postgresql
+    repository: https://charts.bitnami.com/bitnami
+    version: 11.6.7
+
+maintainers:
+  - name: MITRE SAF
+    email: saf@groups.mitre.org

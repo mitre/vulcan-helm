@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "vulcan.fullname" . }}-web
+  labels:
+    app: {{ template "vulcan.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{ int .Values.web.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "vulcan.fullname" . }}
+      release: "{{ .Release.Name }}"
+      role: web
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: {{ template "vulcan.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: web
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+    spec:
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      containers:
+        - args:
+            - bundle
+            - exec
+            - rails
+            - s
+            - -p
+            - {{ .Values.services.internalPort | quote}}
+          env:
+          {{- if .Values.postgresql.auth.existingSecret }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.postgresql.auth.existingSecret }}
+                key: {{ default "password" .Values.postgresql.auth.existingSecretKey }}
+          {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ template "vulcan.fullname" . }}-env
+          {{- if .Values.existingEnvSecret }}
+            - secretRef:
+                name: {{ .Values.existingEnvSecret }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          name: {{ .Chart.Name }}-web
+          ports:
+            - containerPort: {{ int .Values.services.internalPort }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+      serviceAccountName: {{ include "vulcan.serviceAccountName" . }}
+status: {}

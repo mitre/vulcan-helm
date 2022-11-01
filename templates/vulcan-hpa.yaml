@@ -1,0 +1,25 @@
+{{- if .Values.web.hpa.enabled -}}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "vulcan.fullname" . }}
+  labels:
+    app: {{ template "vulcan.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ template "vulcan.fullname" . }}-web
+  minReplicas: {{ .Values.web.hpa.minpods }}
+  maxReplicas: {{ .Values.web.hpa.maxpods }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.web.hpa.cputhreshold }}
+{{- end }}
