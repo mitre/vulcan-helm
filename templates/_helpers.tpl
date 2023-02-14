@@ -2,8 +2,8 @@
 Expand the name of the chart.
 */}}
 {{- define "vulcan.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
 
 {{/*
 Create a default fully qualified app name.
@@ -60,62 +60,3 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
-
-
-{{- define "vulcan.postgresql.fullname" -}}
-{{- if .Values.postgresql.fullnameOverride -}}
-{{- .Values.postgresql.fullnameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- $name := default .Chart.Name .Values.postgresql.nameOverride -}}
-{{- if contains $name .Release.Name -}}
-{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" .Release.Name "vulcan-postgresql" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}
-
-
-{{/*
-Set postgres host
-*/}}
-{{- define "vulcan.postgresql.host" -}}
-{{- if .Values.postgresql.enabled -}}
-{{- template "vulcan.postgresql.fullname" . -}}
-{{- else -}}
-{{- .Values.postgresql.postgresqlHost -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Set postgres secret
-*/}}
-{{- define "vulcan.postgresql.secret" -}}
-{{- if .Values.postgresql.enabled -}}
-{{- template "vulcan.postgresql.fullname" . -}}
-{{- else -}}
-{{- template "vulcan.fullname" . -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Set postgres secretKey
-*/}}
-{{- define "vulcan.postgresql.secretKey" -}}
-{{- if .Values.postgresql.enabled -}}
-"postgresql-password"
-{{- else -}}
-{{- default "postgresql-password" .Values.postgresql.auth.secretKeys.adminPasswordKey | quote -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Set postgres port
-*/}}
-{{- define "vulcan.postgresql.port" -}}
-{{- if .Values.postgresql.enabled -}}
-5432
-{{- else -}}
-{{- default 5432 .Values.postgresql.postgresqlPort -}}
-{{- end -}}
-{{- end -}}

@@ -3,20 +3,13 @@ kind: Service
 metadata:
   name: {{ include "vulcan.fullname" . }}
   labels:
-    app: {{ template "vulcan.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
-  {{- with .Values.services.annotations }}
-    annotations:
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+    app: {{ include "vulcan.fullname" . }}
 spec:
-  type: {{ .Values.services.type }}
+  type: {{ .Values.service.type }}
   ports:
-    - port: {{ int .Values.services.internalPort }}
-      targetPort: {{ int .Values.services.targetPort }}
-      name: {{ .Values.services.name | quote}}
-  selector: {{- include "vulcan.selectorLabels" . | nindent 4 }}
-status:
-  loadBalancer: {}
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "vulcan.selectorLabels" . | nindent 4 }}

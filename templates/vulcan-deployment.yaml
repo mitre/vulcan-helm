@@ -1,90 +1,46 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "vulcan.fullname" . }}-web
-  labels:
-    app: {{ template "vulcan.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+  name: {{ include "vulcan.fullname" . }}
+  labels: # must match the service
+    app: {{ include "vulcan.fullname" . }}
 spec:
-  replicas: {{ int .Values.web.replicaCount }}
+  replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: {{ template "vulcan.fullname" . }}
-      release: "{{ .Release.Name }}"
-      role: web
+      app: {{ include "vulcan.fullname" . }}
   strategy:
-    type: RollingUpdate
+    type: RollingUpdate   # Upgrade this application with a rolling strategy
     rollingUpdate:
-      maxSurge: 1
+      maxSurge: 1         # maximum number of pods that can be scheduled above the desired number of pods (replicas)
       maxUnavailable: 0
   template:
     metadata:
-      labels:
-        app: {{ template "vulcan.fullname" . }}
-        release: "{{ .Release.Name }}"
-        role: web
-      annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+      labels: # must match service and replicaset matchlabel
+        app: {{ include "vulcan.fullname" . }}
     spec:
+      initContainers:
+      - name: check-db-ready
+        image: {{.Values.postgresql.image.repository}}:{{ .Values.postgresql.image.tag }}
+        command: ['sh', '-c',
+          'until pg_isready -h postgres -p 5432;
+          do echo waiting for database; sleep 5; done;']
       containers:
-      - name: vulcan-web
-        image: mitre/vulcan:latest
+      - name: {{ include "vulcan.fullname" . }}
+        image: {{.Values.image.repository}}:{{.Values.image.tag}}
         imagePullPolicy: "Always"
         ports:
-        - containerPort: 3000
-          name: vulcan-web
-        env:
-          - name: POSTGRES_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "vulcan.fullname" . }}-env
-                key: postgres_password
-          - name: SECRET_KEY_BASE
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "vulcan.fullname" . }}-env
-                key: key_base
-          - name: CIPHER_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "vulcan.fullname" . }}-env
-                key: cipher_password
-          - name: CIPHER_SALT
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "vulcan.fullname" . }}-env
-                key: cipher_salt
-          - name: DATABASE_URL
-            value: postgres://postgres:$(POSTGRES_PASSWORD)@postgresql/vulcan_postgres_production
-          - name: RAILS_SERVE_STATIC_FILES
-            value: "true"
-          - name: RAILS_ENV
-            value: production
-          - name: VULCAN_WELCOME_TEXT
-            value: "Custom text on login screen"
-          - name: VULCAN_CONTACT_EMAIL
-            value: "example@email.com"
-          - name: VULCAN_ENABLE_LDAP
-            value: "true"
-          - name: VULCAN_LDAP_HOST
-            value: "ldap.host.example.com"
-          - name: VULCAN_LDAP_PORT
-            value: "636"
-          - name: VULCAN_LDAP_TITLE
-            value: "LDAP Login"
-          - name: VULCAN_LDAP_ATTRIBUTE
-            value: "sAMAccountName"
-          - name: VULCAN_LDAP_ENCRYPTION
-            value: "simple_tls"
-          - name: VULCAN_LDAP_BIND_DN
-            value: "CN=vulcan.svcacct,OU=Users,DC=example,DC=com"
-          - name: VULCAN_LDAP_ADMIN_PASS
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "vulcan.fullname" . }}-env
-                key: ldap_password
-          - name: VULCAN_LDAP_BASE
-            value: "DC=example,DC=com"
+        - containerPort: {{.Values.deployments.containerPort}}
+          name: {{ include "vulcan.fullname" . }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.configmap.name }}
+        readinessProbe:
+            httpGet:
+              path: /
+              port: {{.Values.deployments.containerPort}}
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 2
