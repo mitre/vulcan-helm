@@ -16,3 +16,6 @@ kubectl
 .idea/
 *.tmproj
 .vscode/
+
+# Secrets
+env/vulcan-secrets.yaml
