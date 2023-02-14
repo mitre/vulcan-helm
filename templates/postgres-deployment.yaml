@@ -6,7 +6,6 @@ metadata:
   labels:
       app: postgres
 spec: # of the deployment
-  serviceName: postgres
   replicas: 1
   selector:
    # the deployment must match all pods with the label "app: postgres"
