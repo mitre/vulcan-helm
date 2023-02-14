@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # about the deployment itself. Gives a name of the DEPLOYMENT
+  name: postgres
+  labels:
+      app: postgres
+spec: # of the deployment
+  serviceName: postgres
+  replicas: 1
+  selector:
+   # the deployment must match all pods with the label "app: postgres"
+    matchLabels:
+      # the label for the POD that the deployment is targeting
+      app: postgres # must match spec.template.labels for the pod
+  template: # blue print of a pod
+    metadata:
+      # label for the POD that the deployment is deploying
+      labels:
+        app: postgres # match spec.selector.matchlabels
+    spec:
+      volumes:
+        - name: {{ include "vulcan.fullname" . }}-pv-volume # must match PV
+        {{- if .Values.postgresql.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "vulcan.fullname" . }}-pv-claim # must match PVC
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+      containers:
+        - name: postgres
+          image: {{.Values.postgresql.image.repository}}:{{ .Values.postgresql.image.tag }}
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432  # Exposes container port
+          volumeMounts:
+            - mountPath: $(PGDATA)
+              name: {{ include "vulcan.fullname" . }}-pv-volume # must match PV
+              readOnly: false
+          envFrom:
+            - configMapRef:
+                name: vulcan-config
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            periodSeconds: 30
+            timeoutSeconds: 10
+            initialDelaySeconds: 30
+          resources:
+            requests:
+              cpu: 100m
+

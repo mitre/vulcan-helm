@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "vulcan.fullname" . }}-migrate
+  labels:
+    app.kubernetes.io/name: {{ include "vulcan.fullname" . }}-migrate
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "vulcan.fullname" . }}-migrate
+    spec:
+      restartPolicy: Never
+      initContainers:
+      - name: check-db-ready
+        image: {{.Values.postgresql.image.repository}}:{{ .Values.postgresql.image.tag }}
+        command: ['sh', '-c',
+          'until pg_isready -h postgres -p 5432;
+          do echo waiting for database; sleep 5; done;']
+      containers:
+      - name: {{ include "vulcan.fullname" . }}
+        image: {{.Values.image.repository}}:{{.Values.image.tag}}
+        imagePullPolicy: IfNotPresent
+        command:
+        - rails
+        - db:create
+        - db:schema:load
+        - db:migrate
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.configmap.name }}

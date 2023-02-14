@@ -1,0 +1,31 @@
+{{- if .Values.postgresql.persistence.enabled }}
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: {{ template "vulcan.fullname" . }}-pv-volume
+  labels:
+    type: local
+    app: postgres
+spec:
+  storageClassName: {{ .Values.postgresql.persistence.storageClassName }}
+  capacity:
+    storage: {{ .Values.postgresql.persistence.size }} # Sets PV Volume
+  accessModes:
+    - {{ .Values.postgresql.persistence.accessMode }}
+  hostPath:
+    path: "/mnt/data"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "vulcan.fullname" . }}-pv-claim
+  labels:
+    app: postgres
+spec:
+  accessModes:
+  - {{ .Values.postgresql.persistence.accessMode }}
+  storageClassName: {{ .Values.postgresql.persistence.storageClassName}}
+  resources:
+    requests:
+      storage: {{ .Values.postgresql.persistence.size }}
+{{- end }}
