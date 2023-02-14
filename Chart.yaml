@@ -1,6 +1,6 @@
 apiVersion: v2
 name: vulcan
-description: A web application to streamline the development of STIGs from SRGs
+description: Vulcan Helm chart for Kubernetes. Vulcan is web application to streamline the development of STIGs from SRGs.
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -24,16 +24,6 @@ version: 0.1.0
 appVersion: "2.0.0"
 home: https://github.com/mitre/vulcan-helm
 icon: https://github.com/mitre/vulcan/blob/master/public/apple-touch-icon.png
-sources:
-  - https://github.com/mitre/vulcan
-  - https://mitre-vulcan-prod.herokuapp.com
-  - https://saf.mitre.org
-
-dependencies:
-  - condition: postgresql.enabled
-    name: postgresql
-    repository: https://charts.bitnami.com/bitnami
-    version: 11.6.7
 
 maintainers:
   - name: MITRE SAF
