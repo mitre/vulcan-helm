@@ -5,7 +5,7 @@ metadata:
   labels: # must match the service
     app: {{ include "vulcan.fullname" . }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.vulcan.replicaCount }}
   revisionHistoryLimit: 10
   selector:
     matchLabels:
@@ -28,19 +28,11 @@ spec:
           do echo waiting for database; sleep 5; done;']
       containers:
       - name: {{ include "vulcan.fullname" . }}
-        image: {{.Values.image.repository}}:{{.Values.image.tag}}
+        image: {{.Values.vulcan.image.repository}}:{{.Values.vulcan.image.tag}}
         imagePullPolicy: "Always"
         ports:
-        - containerPort: {{.Values.deployments.containerPort}}
+        - containerPort: {{.Values.vulcan.deployments.containerPort}}
           name: {{ include "vulcan.fullname" . }}
         envFrom:
         - configMapRef:
-            name: {{ .Values.configmap.name }}
-        readinessProbe:
-            httpGet:
-              path: /
-              port: {{.Values.deployments.containerPort}}
-              scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 30
-            timeoutSeconds: 2
+            name: {{ .Values.vulcan.configmap.name }}
