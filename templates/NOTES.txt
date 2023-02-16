@@ -1,31 +1,53 @@
-Thank you for installing {{ .Chart.Name }}.
 
-Your release is named {{ .Release.Name }}.
+{{"\u001B[34m"}}Thank you for installing {{ .Chart.Name }}.{{"\u001B[0m"}}
+
+Your release is named {{"\u001B[34m"}}{{ .Release.Name }}{{"\u001B[0m"}}.
 
 To learn more about the release, try:
 
-  $ helm status {{ .Release.Name }}
-  $ helm get all {{ .Release.Name }}
+  $ {{"\u001B[34m"}}helm status {{ .Release.Name }}{{"\u001B[0m"}}
+  $ {{"\u001B[34m"}}helm get all {{ .Release.Name }}{{"\u001B[0m"}}
 
-1. Get the application URL by running these commands:
-{{- if .Values.ingress.enabled }}
-{{- range $host := .Values.ingress.hosts }}
+{{"\u001B[33m"}}It might take couple minutes for the deployment to complete.{{"\u001B[0m"}}
+  run this command `{{"\u001B[34m"}}watch -n 10 kubectl get pods -n vulcan {{"\u001B[0m"}}` to check the pods' status.
+
+Proceed with the following steps once the pods are running:
+
+1. {{"\u001B[31m"}}Do the following if this is your first installation{{"\u001B[0m"}}
+
+  You will need to create an initial admin account for Vulcan.
+    a. Run the following command to exec into the Vulcan container:
+      {{"\u001B[34m"}}kubectl -n {{ .Release.Namespace }} exec -it $(kubectl -n {{ .Release.Namespace }} get pod -l app=saf-vulcan -o jsonpath="{.items[0].metadata.name}") -- /bin/sh{{"\u001B[0m"}}
+
+    b. Once in the container, run the following
+      {{"\u001B[34m"}}rake db:create_admin{{"\u001B[0m"}}
+
+      Then follow the prompt. You will be asked for the admin name, email, and password
+
+    c. Once the admin is created, you can exit the container with `{{"\u001B[34m"}}ctrl + d{{"\u001B[0m"}}`
+
+2. {{"\u001B[32m"}}To test Vulcan app locally, run the following command:{{"\u001B[0m"}}
+{{- if .Values.vulcan.ingress.enabled }}
+{{- range $host := .Values.vulcan.ingress.hosts }}
   {{- range .paths }}
-  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  {{"\u001B[34m"}}http{{ if $.Values.vulcan.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}{{"\u001B[0m"}}
   {{- end }}
 {{- end }}
-{{- else if contains "NodePort" .Values.service.type }}
-  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "vulcan.fullname" . }})
+{{- else if contains "NodePort" .Values.vulcan.service.type }}
+  {{"\u001B[34m"}}export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "vulcan.fullname" . }})
   export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
-  echo http://$NODE_IP:$NODE_PORT
-{{- else if contains "LoadBalancer" .Values.service.type }}
-     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
-           You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "vulcan.fullname" . }}'
-  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "vulcan.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
-  echo http://$SERVICE_IP:{{ .Values.service.port }}
-{{- else if contains "ClusterIP" .Values.service.type }}
-  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "vulcan.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
-  export CONTAINER_PORT=$(kubectl get pod --namespace {{ .Release.Namespace }} $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
-  echo "Visit http://127.0.0.1:8080 to use your application"
-  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
+  echo http://$NODE_IP:$NODE_PORT{{"\u001B[0m"}}
+{{- else if contains "LoadBalancer" .Values.vulcan.service.type }}
+     NOTE: {{"\u001B[33m"}}It may take a few minutes for the LoadBalancer IP to be available.
+           You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "vulcan.fullname" . }}'{{"\u001B[0m"}}
+  {{"\u001B[34m"}}export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "vulcan.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+  echo http://$SERVICE_IP:{{ .Values.vulcan.service.port }}{{"\u001B[0m"}}
+{{- else if contains "ClusterIP" .Values.vulcan.service.type }}
+
+  {{"\u001B[34m"}}kubectl --namespace {{ .Release.Namespace }} port-forward deployment/{{ include "vulcan.fullname" . }} 3000:3000{{"\u001B[0m"}}
+
+3. {{"\u001B[32m"}}Then access the app on the browser with the following URL:{{"\u001B[0m"}}
+
+  {{"\u001B[34m"}}http://localhost:3000{{"\u001B[0m"}}
+
 {{- end }}
