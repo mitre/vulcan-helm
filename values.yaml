@@ -1,19 +1,4 @@
-# Default values for vulcan.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-fullnameOverride: saf-vulcan
-replicaCount: 1
-imagePullSecrets: []
-
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
+# Settings to be passed into your templates.
 
 postgresql:
   image:
@@ -33,80 +18,84 @@ postgresql:
     storageClassName: "default"
     accessMode: "ReadWriteMany"
 
-configmap:
-  name: vulcan-config
+vulcan:
+  fullnameOverride: saf-vulcan
+  replicaCount: 2
+  imagePullSecrets: []
 
-service:
-  type: ClusterIP
-  port: 3000
-  nodePort: 3000
-  targetPort: 3000
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
 
-image:
-  repository: mitre/vulcan
-  tag: latest
+  configmap:
+    name: vulcan-config
 
-deployments:
-  containerPort: 3000
-  imagePullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3000
+    nodePort: 3000
+    targetPort: 3000
 
-initContainers:
-  name: check-db-ready
-  image: postgres:9.6.5
-  command: [
-      "sh",
-      "-c",
-      "until pg_isready -h postgres -p 5432;
-      do echo waiting for database; sleep 5; done;",
-    ]
+  image:
+    repository: mitre/vulcan
+    tag: latest
 
-ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-  hosts:
-    - host: vulcan.example.com
-      paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: vulcan
-              port:
-                number: 3000
-  tls: []
+  deployments:
+    containerPort: 3000
+    imagePullPolicy: IfNotPresent
 
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+      - host: vulcan.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vulcan
+                port:
+                  number: 3000
+    tls: []
 
-podAnnotations: {}
-podSecurityContext:
-  {}
-  # fsGroup: 2000
-securityContext:
-  {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-resources:
-  {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-nodeSelector: {}
-tolerations: []
-affinity: {}
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+  podAnnotations: {}
+  podSecurityContext:
+    {}
+    # fsGroup: 2000
+  securityContext:
+    {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  resources:
+    {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
