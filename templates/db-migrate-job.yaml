@@ -16,16 +16,14 @@ spec:
         image: {{.Values.postgresql.image.repository}}:{{ .Values.postgresql.image.tag }}
         command: ['sh', '-c',
           'until pg_isready -h postgres -p 5432;
-          do echo waiting for database; sleep 5; done;']
+          do echo waiting for database; sleep 15; done;']
       containers:
       - name: {{ include "vulcan.fullname" . }}
-        image: {{.Values.image.repository}}:{{.Values.image.tag}}
+        image: {{.Values.vulcan.image.repository}}:{{.Values.vulcan.image.tag}}
         imagePullPolicy: IfNotPresent
         command:
         - rails
-        - db:create
-        - db:schema:load
         - db:migrate
         envFrom:
         - configMapRef:
-            name: {{ .Values.configmap.name }}
+            name: {{ .Values.vulcan.configmap.name }}
