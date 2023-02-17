@@ -28,7 +28,7 @@ You will need to have the following installed to run the chart locally:
   4. Run the `start_vulcan.sh` script to install the helm chart.
   5. Follow the instructions on the terminal to access Vulcan on the browser.
 
-    Notes: 
-    The script will generates some secrets [`SECRET_KEY_BASE`, `POSTGRES_PASSWORD`, `DATABASE_URL`, `CIPHER_PASSWORD`, `CIPHER_SALT`]
-    necessary to run Vulcan, a Ruby on Rails app.
+  Note: 
+   The `start_vulcan` script will generate some secrets [`SECRET_KEY_BASE`, `POSTGRES_PASSWORD`, `DATABASE_URL`, `CIPHER_PASSWORD`, `CIPHER_SALT`]
+   necessary to run Vulcan, a Ruby on Rails app.
 
