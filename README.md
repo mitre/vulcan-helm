@@ -29,6 +29,6 @@ You will need to have the following installed to run the chart locally:
   5. Follow the instructions on the terminal to access Vulcan on the browser.
 
   Note: 
-   The `start_vulcan` script will generate some secrets [`SECRET_KEY_BASE`, `POSTGRES_PASSWORD`, `DATABASE_URL`, `CIPHER_PASSWORD`, `CIPHER_SALT`]
+   The `start_vulcan` script will generate some secrets [ `SECRET_KEY_BASE`, `POSTGRES_PASSWORD`, `DATABASE_URL`, `CIPHER_PASSWORD`, `CIPHER_SALT` ]
    necessary to run Vulcan, a Ruby on Rails app.
 
