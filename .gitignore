@@ -18,4 +18,4 @@ kubectl
 .vscode/
 
 # Secrets
-env/vulcan-secrets.yaml
+vulcan/env/vulcan-secrets.yaml

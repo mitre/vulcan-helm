@@ -11,8 +11,8 @@ if [ "$(helm ls -n vulcan -q)" = vulcan ]
     echo "Upgrading the release to a new version ..."
     echo ""
     # Upgrade chart if already installed
-    helm -n vulcan upgrade vulcan .
+    helm -n vulcan upgrade vulcan ./vulcan
   else
     # Install helm chart
-    helm install -n vulcan --create-namespace vulcan .
+    helm install -n vulcan --create-namespace vulcan ./vulcan
 fi
