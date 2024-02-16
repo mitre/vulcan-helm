@@ -28,3 +28,20 @@ icon: https://github.com/mitre/vulcan/blob/master/public/apple-touch-icon.png
 maintainers:
   - name: MITRE SAF
     email: saf@groups.mitre.org
+
+
+annotations:
+  artifacthub.io/category: security
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/links: |
+    - name: support
+      url: https://github.com/mitre/vulcan-helm/issues
+    - name: Additional Security Automation Framework Resources
+      url: https://saf.mitre.org
+  artifacthub.io/maintainers: |
+    - name: MITRE SAF Team
+      email: saf@groups.mitre.org
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/screenshots: |
+    - title: Vulcan Security Guidance Authorship Application
+      url: https://mitre.github.io/saf-training/assets/login_screen-LbEQSId2.png
