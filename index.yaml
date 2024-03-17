@@ -18,6 +18,37 @@ entries:
           url: https://mitre.github.io/saf-training/assets/login_screen-LbEQSId2.png
     apiVersion: v2
     appVersion: 2.1.6
+    created: "2024-03-17T19:14:14.579452256Z"
+    description: Vulcan Helm chart for Kubernetes. Vulcan is web application to streamline
+      the development of STIGs from SRGs.
+    digest: 2ef3f9b4c7198b116cf2f4961044a52b4d3a9bba8048517947c45eb2d453bc7d
+    home: https://github.com/mitre/vulcan-helm
+    icon: https://github.com/mitre/vulcan/blob/master/public/apple-touch-icon.png
+    maintainers:
+    - email: saf@groups.mitre.org
+      name: MITRE SAF
+    name: vulcan
+    type: application
+    urls:
+    - https://github.com/mitre/vulcan-helm/releases/download/vulcan-0.2.2/vulcan-0.2.2.tgz
+    version: 0.2.2
+  - annotations:
+      artifacthub.io/category: security
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: support
+          url: https://github.com/mitre/vulcan-helm/issues
+        - name: Additional Security Automation Framework Resources
+          url: https://saf.mitre.org
+      artifacthub.io/maintainers: |
+        - name: MITRE SAF Team
+          email: saf@groups.mitre.org
+      artifacthub.io/prerelease: "false"
+      artifacthub.io/screenshots: |-
+        - title: Vulcan Security Guidance Authorship Application
+          url: https://mitre.github.io/saf-training/assets/login_screen-LbEQSId2.png
+    apiVersion: v2
+    appVersion: 2.1.6
     created: "2024-03-17T18:55:24.214237962Z"
     description: Vulcan Helm chart for Kubernetes. Vulcan is web application to streamline
       the development of STIGs from SRGs.
@@ -63,4 +94,4 @@ entries:
     urls:
     - vulcan-0.2.0.tgz
     version: 0.2.0
-generated: "2024-03-17T18:55:24.214249443Z"
+generated: "2024-03-17T19:14:14.579464458Z"
