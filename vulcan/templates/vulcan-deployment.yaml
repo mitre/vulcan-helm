@@ -24,8 +24,6 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      securityContext:
-        {{- toYaml .Values.heimdall.podSecurityContext | nindent 8 }}
       initContainers:
       - name: check-db-ready
         image: {{.Values.postgresql.image.repository}}:{{ .Values.postgresql.image.tag }}
