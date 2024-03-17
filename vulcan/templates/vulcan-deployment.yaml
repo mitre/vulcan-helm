@@ -20,6 +20,12 @@ spec:
       labels: # must match service and replicaset matchlabel
         app: {{ include "vulcan.fullname" . }}
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.heimdall.podSecurityContext | nindent 8 }}
       initContainers:
       - name: check-db-ready
         image: {{.Values.postgresql.image.repository}}:{{ .Values.postgresql.image.tag }}

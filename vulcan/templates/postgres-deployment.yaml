@@ -18,6 +18,12 @@ spec: # of the deployment
       labels:
         app: postgres # match spec.selector.matchlabels
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.postgresql.podSecurityContext | nindent 8 }}
       volumes:
         - name: {{ include "vulcan.fullname" . }}-pv-volume # must match PV
         {{- if .Values.postgresql.persistence.enabled }}

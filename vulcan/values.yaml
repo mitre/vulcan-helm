@@ -99,3 +99,6 @@ vulcan:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+
+# imagePullSecrets:
+#   - name: your-secret-name
