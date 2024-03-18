@@ -3,9 +3,6 @@ kind: ConfigMap
 metadata:
   name: {{ .Values.vulcan.configmap.name }}
 data:
-  {{ range .Files.Lines "env/vulcan-secrets.yaml" }}
-    {{ . }}
-  {{ end }}
   {{ range .Files.Lines "env/vulcanconfig.yaml" }}
     {{ . }}
   {{ end }}

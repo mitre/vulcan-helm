@@ -40,3 +40,5 @@ spec:
         envFrom:
         - configMapRef:
             name: {{ .Values.vulcan.configmap.name }}
+        - secretRef:
+            name: {{ .Values.vulcan.secret.name }}

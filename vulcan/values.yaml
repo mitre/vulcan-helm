@@ -35,6 +35,9 @@ vulcan:
   configmap:
     name: vulcan-config
 
+  secret:
+    name: vulcan-secrets
+
   service:
     type: ClusterIP
     port: 3000

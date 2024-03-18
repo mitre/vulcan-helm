@@ -42,7 +42,9 @@ spec: # of the deployment
               readOnly: false
           envFrom:
             - configMapRef:
-                name: vulcan-config
+                name: {{ .Values.vulcan.configmap.name }}
+            - secretRef:
+                name: {{ .Values.vulcan.secret.name }}
           readinessProbe:
             exec:
               command: ["pg_isready", "-U", "postgres"]
