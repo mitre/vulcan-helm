@@ -36,20 +36,24 @@ vulcan:
     name: vulcan-config
 
   # name for the secrets object in k8s
-  secretsName: vulcan-secrets 
+  secretsName: vulcan-secrets
+
+  ###
+  # secrets -- either define a secretsFiles array, or manually define the secrets as values
 
   # local file to draw secrets from
   # (see generate-vulcan-secrets.sh)
-  secretsFiles: ["env/vulcan-secrets.yaml"]
+  # secretsFiles: ["env/vulcan-secrets.yaml"]
 
-  # either define a secretsFiles array, or manually define the secrets as values
+  
   # secrets:
   #   POSTGRES_PASSWORD: 
   #   DATABASE_URL: 
   #   SECRET_KEY_BASE:
   #   CIPHER_PASSWORD: 
-  #   CIPHER_SALT: 
+  #   CIPHER_SALT:
 
+  ###
 
   service:
     type: ClusterIP
